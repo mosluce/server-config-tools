@@ -1,0 +1,30 @@
+#!/bin/sh
+
+VHOST_DIR=$HOME/configs/nginx/conf.d
+
+if [ ! -d "$VHOST_DIR" ]; then
+    mkdir -p $VHOST_DIR
+fi
+
+NAME=$1
+DOMAIN=$2
+PORT=$3
+
+if [ -z "$NAME" -o -z "$DOMAIN" -o -z "$PORT" ]; then
+    echo "command format : adduser [NAME] [DOMAIN] [PORT]"
+    exit
+fi
+
+echo \
+    "server { \
+        server_name $DOMAIN; \
+        location / { \
+            proxy_set_header Upgrade $http_upgrade; \
+            proxy_set_header Connection "upgrade"; \
+            proxy_http_version 1.1; \
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+            proxy_set_header Host $host; \
+            proxy_pass http://172.17.42.1:$PORT; \
+        } \
+    }" >> $VHOST_DIR/$NAME.conf
+                                                    

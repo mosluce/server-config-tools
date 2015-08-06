@@ -1,0 +1,27 @@
+#!/bin/sh
+
+APPS_DIR=$HOME/apps
+REPOS_DIR=$HOME/repos
+
+NAME=$1
+DOMAIN=$2
+PORT=$3
+ENV=$4
+
+if [ -z "$NAME" -o -z "$DOMAIN" -o -z "$PORT" ]; then
+    echo "command format : addapp [NAME] [DOMAIN] [PORT] [ENV]"
+    exit
+fi
+
+docker run -it --rm \
+    -v $APPS_DIR:/pods/apps \
+    -v $REPOS_DIR:/pods/repos \
+    mosluce/node-pod \
+    pod create $NAME
+
+export PATH=`pwd`:$PATH
+
+addcontainer $NAME $PORT $ENV
+addsite $NAME $DOMAIN $PORT
+
+docker restart nginx

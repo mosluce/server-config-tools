@@ -1,0 +1,15 @@
+#!/bin/sh
+
+NAME=$1
+
+APP_DIR=$HOME/apps/$NAME
+REPO_DIR=$HOME/repos/$NAME.git
+VHOST_CONFIG=$HOME/configs/nginx/conf.d/$NAME.conf
+
+sudo rm -rf $APP_DIR 
+sudo rm -rf $REPO_DIR 
+sudo rm -f $VHOST_CONFIG
+
+docker rm -f $NAME
+
+docker restart nginx
